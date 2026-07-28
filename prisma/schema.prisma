@@ -4,11 +4,133 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
-  relationMode = "prisma"
 }
+
+// User Model
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  password String
+  name String
+  birthDate DateTime?
+  phoneNumber String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi
+  profile Profile?
+  cycles Cycle[]
+  moods Mood[]
+  activities Activity[]
+  userBadges userBadge[]
+}
+
+// Profil Model
+model Profile {
+  id String @id @default(cuid())
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Data siklus
+  averageCycleLength Int?
+  averagePeriodLength Int?
+
+  // Preferensi
+  emailNotifications Boolean @default(true)
+  pushNotification Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Cycle (Siklus Menstruasi)
+model Cycle {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Data Utama
+  startDate DateTime //Tanggal mulai menstruasi
+  endDate DateTime // Tanggal selesai menstruasi
+  cycleLength Int? // Panjang siklus (hari)
+  periodLength Int? // Lama menstruasi
+
+  // Gejala
+  symptoms String? //JSON string atau text
+  notes String? // catatan tambahan
+
+  // Flow intensity (1-5)
+  flowIntensity Int? @default(3)
+
+  // Prediksi
+  predictedNextDate DateTime? // Prediksi tanggal berikutnya
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Mood Tracker
+model Mood {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date DateTime @default(now())
+  mood String // happy, sad, anxious, tired, etc.
+  energyLevel Int? // 1-10
+  stressLevel Int? // 1-10
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Activity Tracker
+model Activity {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date DateTime @default(now())
+  activityType String // exercise, meditation, yoga, etc.
+  duration Int? // dalam menit
+  intensity Int? // 1-10
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Badge (untuk gamification)
+model Badge {
+  id String @id @default(cuid())
+  name String @unique
+  description String
+  icon String // emoji atau icon name
+  requirement String // JSON untuk requirement
+
+  userBadge userBadge[]
+
+  createdAt DateTime @default(now())
+}
+
+// User Badge (badge yang dimiliki user)
+model userBadge {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId String
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  earnedAt DateTime @default(now())
+  @@unique([userId, badgeId])
+}
+
+
+
