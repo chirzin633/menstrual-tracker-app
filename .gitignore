@@ -191,4 +191,7 @@ dist
 .history
 .ionide
 
+# Prisma
+src/generated/prisma/
+
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,nextjs

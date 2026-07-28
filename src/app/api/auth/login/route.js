@@ -8,7 +8,7 @@ export async function POST(req) {
     const { email, password } = body;
 
     // Validasi input
-    if ((!email, !password)) {
+    if (!email || !password) {
       return NextResponse.json(
         { error: "Email and password must be fill" },
         { status: 400 },

@@ -1,4 +1,4 @@
-import { hashPasword } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -21,14 +21,14 @@ export async function POST(req) {
     });
 
     if (existingUser) {
-      return NextResponse.json({
-        error: "Email has been registerd",
-        status: 400,
-      });
+      return NextResponse.json(
+        { error: "Email has been registerd" },
+        { status: 400 },
+      );
     }
 
     // Hash password
-    const hashedPassword = await hashPasword(password);
+    const hashedPassword = await hashPassword(password);
 
     // Buat user baru
     const user = await prisma.user.create({
@@ -52,9 +52,7 @@ export async function POST(req) {
 
     return NextResponse.json(
       { message: "User successfully created", user },
-      {
-        status: 201,
-      },
+      { status: 201 },
     );
   } catch (error) {
     console.error("Signup error", error);
