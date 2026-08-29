@@ -1,9 +1,20 @@
-import Navbar from "@/components/Navbar";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
-  return (
-    <>
-      <Navbar />
-    </>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
+
+  return null;
 }

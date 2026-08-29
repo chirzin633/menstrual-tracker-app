@@ -12,6 +12,22 @@ datasource db {
   provider = "mysql"
 }
 
+
+// Session Model
+model Session {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token String @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([token])
+
+}
+
 // User Model
 model User {
   id String @id @default(cuid())
@@ -29,6 +45,7 @@ model User {
   moods Mood[]
   activities Activity[]
   userBadges userBadge[]
+  sessions Session[]
 }
 
 // Profil Model

@@ -120,6 +120,15 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -202,6 +211,12 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.SessionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token'
+};
+
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
@@ -257,6 +272,7 @@ exports.Prisma.userBadgeOrderByRelevanceFieldEnum = {
 
 
 exports.Prisma.ModelName = {
+  Session: 'Session',
   User: 'User',
   Profile: 'Profile',
   Cycle: 'Cycle',
