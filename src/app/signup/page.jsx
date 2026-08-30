@@ -1,3 +1,5 @@
+// src/app/signup/page.jsx
+
 "use client";
 
 import { Heart } from "lucide-react";

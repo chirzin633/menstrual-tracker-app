@@ -1,3 +1,5 @@
+// src/app/api/profile/route.js
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 

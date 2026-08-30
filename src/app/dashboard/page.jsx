@@ -1,3 +1,5 @@
+// src/app/dashboard/page.jsx
+
 "use client";
 
 import Card from "@/components/Card";

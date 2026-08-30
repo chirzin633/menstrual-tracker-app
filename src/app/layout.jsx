@@ -1,3 +1,5 @@
+// src/app/layout.jsx
+
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -13,7 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <body className={inter.className}>
-        <div className="min-h-screen bg-linear-to-br from-pink-50 to-purple-50">
+        <div className="bg-linear-to-br from-pink-50 to-purple-50 min-h-screen">
           {children}
         </div>
         <Toaster position="top-right" />

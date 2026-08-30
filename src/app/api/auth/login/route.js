@@ -1,6 +1,8 @@
+// src/app/api/auth/login/route.js
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { comparePassword } from "@/lib/auth";
+import { comparePassword, generateToken, setTokenCookie } from "@/lib/auth";
 
 export async function POST(req) {
   try {
@@ -32,12 +34,32 @@ export async function POST(req) {
       return NextResponse.json({ error: "Email atau password salah" });
     }
 
-    // return user data
-    const { password: _, ...userWithoutPassword } = user;
-    return NextResponse.json({
-      message: "Login success",
-      user: userWithoutPassword,
+    // generate token
+    const token = generateToken(user.id);
+
+    // Simpan session ke database
+    await prisma.session.create({
+      data: {
+        userId: user.id,
+        token,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 1000), // 7 days
+      },
     });
+
+    // Set cookie
+    const response = NextResponse.json({
+      message: "Login berhasil",
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        birthDate: user.birthDate,
+      },
+    });
+
+    setTokenCookie(token);
+
+    return response;
   } catch (error) {
     console.error("Login error: ", error);
     return NextResponse.json(

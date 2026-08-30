@@ -1,3 +1,5 @@
+// src/components/Card.jsx
+
 export default function Card({ children, className = "" }) {
   return (
     <div

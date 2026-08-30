@@ -1,3 +1,5 @@
+// src/app/mood-activity/page.jsx
+
 "use client";
 
 import Card from "@/components/Card";

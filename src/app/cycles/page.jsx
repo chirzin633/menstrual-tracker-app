@@ -1,3 +1,5 @@
+// src/app/cycles/page.jsx
+
 "use client";
 
 import Card from "@/components/Card";

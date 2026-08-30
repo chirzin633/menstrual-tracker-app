@@ -1,3 +1,5 @@
+// src/app/page.jsx
+
 "use client";
 
 import { useRouter } from "next/navigation";
