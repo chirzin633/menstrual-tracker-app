@@ -13,6 +13,7 @@
     "@types/cookie": "^0.6.0",
     "bcrypt": "^6.0.0",
     "date-fns": "^4.4.0",
+    "jose": "^6.2.11",
     "js-cookie": "^3.0.8",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.27.0",

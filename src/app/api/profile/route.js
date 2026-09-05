@@ -42,7 +42,11 @@ export async function GET(req) {
 export async function PUT(req) {
   try {
     const body = await req.json();
-    const userId = "user-id-temporary";
+    const userId = await getUserIdFromRequest(req);
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const {
       name,

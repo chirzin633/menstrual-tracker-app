@@ -37,8 +37,11 @@ export async function POST(req) {
 
     const { startDate, endDate, flowIntensity, symptoms, notes } = body;
 
-    // TODO: Ambil userID dari auth
-    const userId = "user-id-temporary";
+    const userId = await getUserIdFromRequest(req);
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Validasi
     if (!startDate || !endDate) {
@@ -99,17 +102,15 @@ export async function POST(req) {
     });
 
     if (allCycles.length >= 2) {
-      const totalLength = allCycles.reduce((sum, c, index) => {
-        if (index < allCycles.length - 1) {
-          const nextCycle = allCycles[index - 1];
-          const diff = Math.ceil(
-            (c.startDate - nextCycle.startDate) / (1000 * 60 * 60 * 24),
-          );
-          return sum + diff;
-        }
+      let totalLength = 0;
 
-        return sum;
-      }, 0);
+      for (let i = 0; i < allCycles.length - 1; i++) {
+        const diff = Math.ceil(
+          (allCycles[i].startDate - allCycles[i + 1].startDate) /
+            (1000 * 60 * 60 * 24),
+        );
+        totalLength += diff;
+      }
 
       const avgLength = Math.round(totalLength / (allCycles.length - 1));
 

@@ -13,12 +13,19 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.cycle.deleteMany({
+    const deleted = await prisma.cycle.deleteMany({
       where: {
         id,
         userId,
       },
     });
+
+    if (deleted.count === 0) {
+      return NextResponse.json(
+        { error: "Cycle tidak ditemukan" },
+        { status: 404 },
+      );
+    }
 
     return NextResponse.json({ message: "Cycle berhasil dihapus!" });
   } catch (error) {
@@ -30,44 +37,49 @@ export async function DELETE(req, { params }) {
   }
 }
 
-export async function PUT(req, { params }) {}
-try {
-  const { id } = params;
-  const body = await req.json();
-  const { startDate, endDate, flowIntensity, symptoms, notes } = body;
-  const userId = "user-id-temporary";
+export async function PUT(req, { params }) {
+  try {
+    const { id } = params;
+    const body = await req.json();
+    const { startDate, endDate, flowIntensity, symptoms, notes } = body;
+    const userId = await getUserIdFromRequest(req);
 
-  // Validasi ownership
-  const existingCycle = await prisma.cycle.findFirst({
-    where: { id, userId },
-  });
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  if (!existingCycle) {
+    // Validasi ownership
+    const existingCycle = await prisma.cycle.findFirst({
+      where: { id, userId },
+    });
+
+    if (!existingCycle) {
+      return NextResponse.json(
+        { error: "Cycle tidak ditemukan" },
+        { status: 404 },
+      );
+    }
+
+    const updatedCycle = await prisma.cycle.update({
+      where: { id },
+      data: {
+        startDate: startDate ? new Date(startDate) : undefined,
+        endDate: endDate ? new Date(endDate) : undefined,
+        flowIntensity,
+        symptoms: symptoms ? JSON.stringify(symptoms) : undefined,
+        notes,
+      },
+    });
+
+    return NextResponse.json({
+      message: "Cycle berhasil diupdate",
+      cycle: updatedCycle,
+    });
+  } catch (error) {
+    console.error("Update cycle error:", error);
     return NextResponse.json(
-      { error: "Cycle tidak ditemukan" },
-      { status: 404 },
+      { error: "Terjadi kesalahan pada server" },
+      { status: 500 },
     );
   }
-
-  const updatedCycle = await prisma.cycle.update({
-    where: { id },
-    data: {
-      startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined,
-      flowIntensity,
-      symptoms: symptoms ? JSON.stringify(symptoms) : null,
-      notes,
-    },
-  });
-
-  return NextResponse.json({
-    message: "Cycle berhasil diupdate",
-    cycle: updatedCycle,
-  });
-} catch (error) {
-  console.error("Update cycle error:", error);
-  return NextResponse.json(
-    { error: "Terjadi kesalahan pada server" },
-    { status: 500 },
-  );
 }

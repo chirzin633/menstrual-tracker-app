@@ -31,7 +31,11 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { mood, energyLevel, stressLevel, notes } = body;
-    const userId = "user-id-temporary";
+    const userId = await getUserIdFromRequest(req);
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (!mood) {
       return NextResponse.json({ error: "Mood wajib diisi!" }, { status: 400 });
@@ -41,8 +45,8 @@ export async function POST(req) {
       data: {
         userId,
         mood,
-        energyLevel: energyLevel || 5,
-        stressLevel: stressLevel || 5,
+        energyLevel: energyLevel ?? 5,
+        stressLevel: stressLevel ?? 5,
         notes,
       },
     });
