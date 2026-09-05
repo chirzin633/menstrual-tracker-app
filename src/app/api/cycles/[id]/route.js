@@ -2,11 +2,16 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdFromRequest } from "@/lib/auth";
 
 export async function DELETE(req, { params }) {
   try {
     const { id } = params;
-    const userId = "user-id-temporary";
+    const userId = await getUserIdFromRequest(req);
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     await prisma.cycle.deleteMany({
       where: {

@@ -2,12 +2,17 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdFromRequest } from "@/lib/auth";
 
 // GET ambil semua cycle user
 export async function GET(req) {
   try {
     // ambil user id dari auth
-    const userId = "user-id-temporary";
+    const userId = await getUserIdFromRequest(req);
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const cycles = await prisma.cycle.findMany({
       where: { userId },

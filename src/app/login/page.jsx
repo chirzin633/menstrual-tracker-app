@@ -39,7 +39,9 @@ export default function LoginPage() {
       if (response.ok) {
         toast.success("Login berhasil!");
         localStorage.setItem("user", JSON.stringify(data.user));
+
         router.push("/dashboard");
+        router.refresh();
       } else {
         toast.error(data.error || "Login gagal");
       }

@@ -25,6 +25,16 @@ export default function Navbar() {
 
   const isActive = (path) => pathName === path;
 
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("user");
+
+      (window, (location.href = "/api/auth/logout"));
+    } catch (error) {
+      console.error("Log out error: ", error);
+    }
+  };
+
   return (
     <nav className="bg-white/80 shadow-lg backdrop-blur-md border-pink-100 border-b">
       <div className="mx-auto px-4 max-w-7xl">
@@ -56,9 +66,7 @@ export default function Navbar() {
 
           {/* Logout Button */}
           <button
-            onClick={() => {
-              window.location.href = "/login";
-            }}
+            onClick={handleLogout}
             className="flex items-center gap-2 hover:bg-red-50 px-4 py-2 rounded-lg text-red-500 transition-all"
           >
             <LogOut className="w-4 h-4" />

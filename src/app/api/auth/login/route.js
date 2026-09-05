@@ -2,7 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { comparePassword, generateToken, setTokenCookie } from "@/lib/auth";
+import { comparePassword, generateToken } from "@/lib/auth";
 
 export async function POST(req) {
   try {
@@ -31,7 +31,12 @@ export async function POST(req) {
     const isValid = await comparePassword(password, user.password);
 
     if (!isValid) {
-      return NextResponse.json({ error: "Email atau password salah" });
+      return NextResponse.json(
+        {
+          error: "Email atau password salah",
+        },
+        { status: 401 },
+      );
     }
 
     // generate token
@@ -42,7 +47,7 @@ export async function POST(req) {
       data: {
         userId: user.id,
         token,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 1000), // 7 days
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       },
     });
 
@@ -57,7 +62,13 @@ export async function POST(req) {
       },
     });
 
-    setTokenCookie(token);
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
 
     return response;
   } catch (error) {

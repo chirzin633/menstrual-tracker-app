@@ -2,10 +2,15 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdFromRequest } from "@/lib/auth";
 
 export async function GET(req) {
   try {
-    const userId = "user-id-temporary";
+    const userId = await getUserIdFromRequest(req);
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const moods = await prisma.mood.findMany({
       where: { userId },

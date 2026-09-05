@@ -40,5 +40,15 @@ export async function setTokenCookie(token) {
 
 export async function removeTokenCookies() {
   const cookieStore = await cookies();
-  cookieStore.delete;
+  cookieStore.delete("token");
+}
+
+export async function getUserIdFromRequest(req) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) return null;
+
+  const decoded = verifyToken(token);
+  return decoded ? decoded.userId : null;
 }
