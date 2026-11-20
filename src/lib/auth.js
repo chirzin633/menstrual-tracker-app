@@ -53,19 +53,15 @@ export async function getUserIdFromRequest(req) {
   const decoded = verifyToken(token);
   if (!decoded) return null;
 
-  try {
-    const session = await prisma.session.findFirst({
-      where: {
-        token,
-        userId: decoded.userId,
-        expiresAt: { gte: new Date() },
-      },
-    });
+  const session = await prisma.session.findFirst({
+    where: {
+      token,
+      userId: decoded.userId,
+      expiresAt: { gte: new Date() },
+    },
+  });
 
-    if (!session) return null;
-  } catch (error) {
-    console.error("Session validation error:", error);
-    return null;
-  }
+  if (!session) return null;
+
   return decoded.userId;
 }
