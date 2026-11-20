@@ -191,6 +191,7 @@ dist
 .history
 .ionide
 doc.md
+DESAIN.md
 
 # Prisma
 src/generated/prisma/
