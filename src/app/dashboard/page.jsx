@@ -92,7 +92,7 @@ export default function DashboardPage() {
 
   const getCycleDayText = (day) => {
     if (day <= 5) return "Menstruation";
-    if (day <= 17) return "Follicular Phase";
+    if (day <= 13) return "Follicular Phase";
     if (day <= 16) return "Ovulation";
     return "Luteal Phase";
   };

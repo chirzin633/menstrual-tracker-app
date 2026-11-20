@@ -40,7 +40,7 @@ export default function CyclesPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.prevenetDefault();
+    e.preventDefault();
 
     try {
       const url = editingCycle
@@ -212,7 +212,7 @@ export default function CyclesPage() {
                                   key={index}
                                   className="bg-pink-100 px-2 py-1 rounded-full text-pink-700 text-xs"
                                 >
-                                  {symptoms}
+                                  {symtom}
                                 </span>
                               ))}
                             </div>
@@ -274,7 +274,7 @@ export default function CyclesPage() {
                       type="date"
                       value={formData.endDate}
                       onChange={(e) =>
-                        setFormData({ ...formData, startDate: e.target.value })
+                        setFormData({ ...formData, endDate: e.target.value })
                       }
                       required
                       className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"

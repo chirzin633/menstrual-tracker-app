@@ -6,7 +6,7 @@ import { getUserIdFromRequest } from "@/lib/auth";
 
 export async function DELETE(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
 
     if (!userId) {
@@ -39,7 +39,7 @@ export async function DELETE(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
     const { mood, energyLevel, stressLevel, notes } = body;
     const userId = await getUserIdFromRequest(req);

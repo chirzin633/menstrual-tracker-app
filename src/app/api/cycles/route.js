@@ -54,14 +54,27 @@ export async function POST(req) {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    // Hitung period length
-    const periodLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    if (end < start) {
+      return NextResponse.json(
+        { error: "End date harus lebih besar atau sama dengan start date" },
+        { status: 400 },
+      );
+    }
 
-    // Ambil cycle terakhir untuk hitung cycle length
     const lastCycle = await prisma.cycle.findFirst({
       where: { userId },
       orderBy: { startDate: "desc" },
     });
+
+    if (lastCycle && start <= lastCycle.startDate) {
+      return NextResponse.json(
+        { error: "Start date harus setelah siklus terakhir" },
+        { status: 400 },
+      );
+    }
+
+    // Hitung period length
+    const periodLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
     let cycleLength = null;
     if (lastCycle) {

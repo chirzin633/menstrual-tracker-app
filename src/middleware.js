@@ -1,3 +1,4 @@
+// src/middleware.js
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose/jwt/verify";
 
@@ -13,7 +14,6 @@ export async function middleware(req) {
     "/mood-activity",
     "/profile",
   ];
-
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route),
   );

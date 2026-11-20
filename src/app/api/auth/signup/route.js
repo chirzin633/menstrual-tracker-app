@@ -17,6 +17,13 @@ export async function POST(req) {
       );
     }
 
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: "Password minimal 6 karakter" },
+        { status: 400 },
+      );
+    }
+
     // cek email sudah terdaftar
     const existingUser = await prisma.user.findUnique({
       where: { email },

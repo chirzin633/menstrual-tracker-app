@@ -3,6 +3,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
@@ -50,5 +51,21 @@ export async function getUserIdFromRequest(req) {
   if (!token) return null;
 
   const decoded = verifyToken(token);
-  return decoded ? decoded.userId : null;
+  if (!decoded) return null;
+
+  try {
+    const session = await prisma.session.findFirst({
+      where: {
+        token,
+        userId: decoded.userId,
+        expiresAt: { gte: new Date() },
+      },
+    });
+
+    if (!session) return null;
+  } catch (error) {
+    console.error("Session validation error:", error);
+    return null;
+  }
+  return decoded.userId;
 }

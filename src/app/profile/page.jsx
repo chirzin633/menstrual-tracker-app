@@ -25,7 +25,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchProfile();
-  });
+  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -47,8 +47,8 @@ export default function ProfilePage() {
               ? data.profile.emailNotifications
               : true,
           pushNotifications:
-            data.profile.pushNotifications !== undefined
-              ? data.profile.pushNotifications
+            data.profile.pushNotification !== undefined
+              ? data.profile.pushNotification
               : true,
         });
       }
@@ -171,7 +171,7 @@ export default function ProfilePage() {
               <div className="flex justify-between">
                 <span className="text-gray-600">Total Cycles</span>
                 <span className="font-semibold text-pink-500">
-                  {profile?.user?.cycles?.length || 0}
+                  {profile?.user?._count?.cycles || 0}
                 </span>
               </div>
             </div>
@@ -196,12 +196,12 @@ export default function ProfilePage() {
                 <span className="text-gray-600">Push Notifications</span>
                 <span
                   className={`px-3 py-1 rounded-full text-sm ${
-                    profile?.pushNotifications
+                    profile?.pushNotification
                       ? "bg-green-100 text-green-700"
                       : "bg-gray-100 text-gray-500"
                   }`}
                 >
-                  {profile?.pushNotifications ? "On" : "Off"}
+                  {profile?.pushNotification ? "On" : "Off"}
                 </span>
               </div>
             </div>

@@ -190,6 +190,7 @@ dist
 # Ignore all local history of files
 .history
 .ionide
+doc.md
 
 # Prisma
 src/generated/prisma/

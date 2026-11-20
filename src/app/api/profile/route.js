@@ -20,6 +20,11 @@ export async function GET(req) {
             name: true,
             email: true,
             birthDate: true,
+            _count: {
+              select: {
+                cycles: true,
+              },
+            },
           },
         },
       },
