@@ -2,6 +2,9 @@
 
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -65,17 +68,17 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex justify-center items-center bg-linear-to-br from-pink-100 via-purple-100 to-pink-100 p-4 min-h-screen">
-      <div className="bg-white/90 shadow-2xl backdrop-blur-md p-8 border border-pink-200 rounded-3xl w-full max-w-md">
+    <div className="flex justify-center items-center bg-[var(--background)] p-4 min-h-screen">
+      <div className="bg-[var(--secondary-background)] border-2 border-black rounded-[5px] shadow-[4px_4px_0_0_#000] p-8 w-full max-w-md">
         {/* Logo */}
         <div className="mb-8 text-center">
           <div className="flex justify-center mb-4">
-            <Heart className="fill-pink-500 w-16 h-16 text-pink-500" />
+            <Heart className="fill-[var(--main)] w-16 h-16 text-[var(--main)]" />
           </div>
-          <h1 className="bg-clip-text bg-linear-to-r from-pink-500 to-purple-500 font-bold text-transparent text-3xl">
+          <h1 className="font-bold text-3xl text-[var(--foreground)]">
             Create Account
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-[var(--foreground)]">
             Start tracking your menstrual cycle
           </p>
         </div>
@@ -83,13 +86,8 @@ export default function SignupPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="name"
-              className="block mb-2 font-medium text-gray-700 text-sm"
-            >
-              Full Name
-            </label>
-            <input
+            <Label htmlFor="name">Full Name</Label>
+            <Input
               type="text"
               name="name"
               id="name"
@@ -97,18 +95,12 @@ export default function SignupPage() {
               onChange={handleChange}
               required
               placeholder="Your Name"
-              className="px-4 py-3 border border-gray-300 focus:border-pink-500 rounded-xl outline-none focus:ring-2 focus:ring-pink-200 w-full transition-all"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block mb-2 font-medium text-gray-700 text-sm"
-            >
-              Email Address
-            </label>
-            <input
+            <Label htmlFor="email">Email Address</Label>
+            <Input
               type="email"
               name="email"
               id="email"
@@ -116,18 +108,12 @@ export default function SignupPage() {
               onChange={handleChange}
               required
               placeholder="you@example.com"
-              className="px-4 py-3 border border-gray-300 focus:border-pink-500 rounded-xl outline-none focus:ring-2 focus:ring-pink-200 w-full transition-all"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block mb-2 font-medium text-gray-700 text-sm"
-            >
-              Password
-            </label>
-            <input
+            <Label htmlFor="password">Password</Label>
+            <Input
               type="password"
               name="password"
               id="password"
@@ -135,18 +121,17 @@ export default function SignupPage() {
               onChange={handleChange}
               required
               placeholder="Min 6 characters"
-              className="px-4 py-3 border border-gray-300 focus:border-pink-500 rounded-xl outline-none focus:ring-2 focus:ring-pink-200 w-full transition-all"
             />
           </div>
 
           <div>
-            <label
+            <Label
               htmlFor="confirmPassword"
               className="block mb-2 font-medium text-gray-700 text-sm"
             >
               Confirm Password
-            </label>
-            <input
+            </Label>
+            <Input
               type="password"
               name="confirmPassword"
               id="confirmPassword"
@@ -154,24 +139,19 @@ export default function SignupPage() {
               onChange={handleChange}
               required
               placeholder="Confirm your password"
-              className="px-4 py-3 border border-gray-300 focus:border-pink-500 rounded-xl outline-none focus:ring-2 focus:ring-pink-200 w-full transition-all"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 rounded-xl text-white font-semibold transition-all ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-linear-to-r from-pink-500 to-purple-500 hover:shadow-lg hover:scale-[1.02]"}`}
-          >
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Loading..." : "Create Account"}
-          </button>
+          </Button>
         </form>
 
-        <p className="mt-6 text-gray-600 text-center">
+        <p className="mt-6 text-center text-[var(--foreground)]">
           Already have an account?{" "}
           <Link
             href="/login"
-            className="font-semibold text-pink-500 hover:underline"
+            className="font-bold underline decoration-2 underline-offset-2 hover:text-[var(--main)]"
           >
             Login
           </Link>
