@@ -2,6 +2,7 @@
 
 "use client";
 
+import { Button } from "./ui/button";
 import {
   Calendar,
   Heart,
@@ -12,6 +13,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "./ui/navigation-menu";
 
 export default function Navbar() {
   const pathName = usePathname();
@@ -36,42 +44,48 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white/80 shadow-lg backdrop-blur-md border-pink-100 border-b">
+    <nav className="bg-[var(--secondary-background)] border-b-2 border-black shadow-[0_4px_0_0_#000]">
       <div className="mx-auto px-4 max-w-7xl">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2">
-            <Heart className="fill-pink-500 w-8 h-8 text-pink-500" />
-            <span className="bg-clip-text bg-linear-to-r from-pink-500 to-purple-500 font-bold text-transparent text-xl">
+            <Heart className="fill-[var(--main)] w-8 h-8 text-[var(--main)]" />
+            <span className="font-bold text-xl text-[var(--foreground)]">
               Menstrual Tracker
             </span>
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${isActive(item.href) ? "bg-pink-500 text-white shadow-md" : "text-gray-500 hover:bg-pink-50 hover:text-pink-500"}`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium text-sm">{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavigationMenuItem key={item.href}>
+                    <NavigationMenuLink
+                      className={
+                        isActive(item.href)
+                          ? "bg-main text-main-foreground border-border"
+                          : ""
+                      }
+                      render={<Link href={item.href} />}
+                    >
+                      <span className="flex items-center gap-2">
+                        <Icon className="w-4 h-4" />
+                        {item.label}
+                      </span>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                );
+              })}
+            </NavigationMenuList>
+          </NavigationMenu>
 
           {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 hover:bg-red-50 px-4 py-2 rounded-lg text-red-500 transition-all"
-          >
+          <Button onClick={handleLogout}>
             <LogOut className="w-4 h-4" />
             <span className="hidden md:inline font-medium text-sm">Logout</span>
-          </button>
+          </Button>
         </div>
       </div>
     </nav>

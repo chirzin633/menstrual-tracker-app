@@ -15,6 +15,14 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -79,6 +87,26 @@ export default function DashboardPage() {
     }
   };
 
+  const chartData = [...dashboardData.cycles]
+    .slice(0, 6)
+    .reverse()
+    .map((cycle, index) => ({
+      label: `Siklus ${index + 1}`,
+      panjangSiklus: cycle.cycleLength || 0,
+      durasiHaid: cycle.periodLength || 0,
+    }));
+
+  const chartConfig = {
+    panjangSiklus: {
+      label: "Panjang Siklus (hari)",
+      color: "var(--chart-1)",
+    },
+    durasiHaid: {
+      label: "Durasi Haid (hari)",
+      color: "var(--chart-2)",
+    },
+  };
+
   if (loading) {
     return (
       <>
@@ -103,8 +131,8 @@ export default function DashboardPage() {
       <div className="mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-bold text-gray-800 text-3xl">
-            Hello, {dashboardData.profile?.user?.name || "User"}! 👋
+          <h1 className="font-bold text-foreground text-3xl">
+            Hello, {dashboardData.profile?.user?.name || "User"}!
           </h1>
           <p className="mt-1 text-gray-600">
             Here's your menstrual cycle overview
@@ -113,7 +141,7 @@ export default function DashboardPage() {
 
         {/* Stats Card */}
         <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
-          <Card className="bg-linear-to-br from-pink-500 to-pink-400 text-white">
+          <Card className="bg-linear-to-br from-pink-500 to-pink-400 text-white px-2">
             <div className="flex justify-between items-center">
               <div>
                 <p className="opacity-80 text-sm">Cycle Day</p>
@@ -128,7 +156,7 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="bg-linear-to-br from-purple-500 to-purple-400 text-white">
+          <Card className="bg-linear-to-br from-purple-500 to-purple-400 text-white px-2">
             <div className="flex justify-between items-center">
               <div>
                 <p className="opacity-80 text-sm">Total Cycle</p>
@@ -141,7 +169,7 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="bg-linear-to-br from-blue-500 to-blue-400 text-white">
+          <Card className="bg-linear-to-br from-blue-500 to-blue-400 text-white px-2">
             <div className="flex justify-between items-center">
               <div>
                 <p className="opacity-80 text-sm">Next Period</p>
@@ -159,7 +187,7 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="bg-linear-to-br from-green-500 to-green-400 text-white">
+          <Card className="bg-linear-to-br from-green-500 to-green-400 text-white px-2">
             <div className="flex justify-between items-center">
               <div>
                 <p className="opacity-80 text-sm">Badges</p>
@@ -173,10 +201,56 @@ export default function DashboardPage() {
           </Card>
         </div>
 
+        {/* Chart section */}
+        <Card className="mb-8 px-2">
+          <h2 className="flex items-center gap-2 mb-4 font-heading text-xl">
+            <TrendingUp className="w-5 h-5 text-main" />
+            Riwayat Siklus
+          </h2>
+
+          {chartData.length > 0 ? (
+            <ChartContainer config={chartConfig} className="h-75 w-full">
+              <BarChart data={chartData}>
+                <CartesianGrid vertical={false} stroke="var(--border)" />
+                <XAxis
+                  dataKey="label"
+                  tickLine={false}
+                  axisLine={{ stroke: "var(--border)", strokeWidth: 2 }}
+                  tick={{ fill: "var(--foreground)" }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={{ stroke: "var(--border)", strokeWidth: 2 }}
+                  tick={{ fill: "var(--foreground)" }}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar
+                  dataKey="panjangSiklus"
+                  fill="var(--color-panjangSiklus)"
+                  stroke="var(--border)"
+                  strokeWidth={2}
+                  radius={0}
+                />
+                <Bar
+                  dataKey="durasiHaid"
+                  fill="var(--color-durasiHaid)"
+                  stroke="var(--border)"
+                  strokeWidth={2}
+                  radius={0}
+                />
+              </BarChart>
+            </ChartContainer>
+          ) : (
+            <p className="text-foreground">
+              Belum ada data siklus untuk ditampilkan.
+            </p>
+          )}
+        </Card>
+
         {/* Badges Section */}
-        <Card className="mb-8">
-          <h2 className="flex items-center gap-2 mb-4 font-semibold text-gray-800 text-xl">
-            <Award className="w-5 h-5 text-pink-500" />
+        <Card className="mb-8 px-2">
+          <h2 className="flex items-center gap-2 mb-4 font-heading text-xl">
+            <Award className="w-5 h-5 text-heading" />
             Your Badges
           </h2>
 
@@ -185,17 +259,15 @@ export default function DashboardPage() {
               {dashboardData.badges.map((badge) => (
                 <div
                   key={badge.id}
-                  className="flex items-center gap-2 bg-pink-50 px-4 py-2 rounded-full"
+                  className="flex items-center gap-2 bg-main text-main-foreground border-2 border-border rounded-base px-4 py-2"
                 >
                   <span className="text-2xl">{badge.icon}</span>
-                  <span className="font-medium text-gray-700 text-sm">
-                    {badge.name}
-                  </span>
+                  <span className="font-medium text-sm">{badge.name}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">
+            <p className="text-foreground">
               No badges yet. Start tracking to earn badges!
             </p>
           )}
@@ -203,29 +275,26 @@ export default function DashboardPage() {
 
         {/* Quick Action */}
         <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
-          <button
-            onClick={() => (window.location.href = "/cycles")}
-            className="flex justify-center items-center gap-3 bg-white shadow-lg hover:shadow-xl p-4 border-2 border-pink-200 hover:border-pink-400 rounded-xl transition-all"
-          >
-            <Droplet className="w-6 h-6 text-pink-500" />
-            <span className="font-medium text-gray-700">Log New Cycle</span>
-          </button>
+          <Link href="/cycles">
+            <Button className="flex w-full justify-center items-center gap-3 h-auto py-4">
+              <Droplet className="w-6 h-6 text-pink-500" />
+              <span>Log New Cycle</span>
+            </Button>
+          </Link>
 
-          <button
-            onClick={() => (window.location.href = "/mood-activity")}
-            className="flex justify-center items-center gap-3 bg-white shadow-lg hover:shadow-xl p-4 border-2 border-purple-200 hover:border-purple-400 rounded-xl transition-all"
-          >
-            <Smile className="w-6 h-6 text-purple-500" />
-            <span className="font-medium text-gray-700">Log Mood</span>
-          </button>
+          <Link href="/mood-activity">
+            <Button className="flex w-full justify-center items-center gap-3 h-auto py-4">
+              <Smile className="w-6 h-6 text-purple-500" />
+              <span>Log Mood</span>
+            </Button>
+          </Link>
 
-          <button
-            onClick={() => (window.location.href = "/mood-activity")}
-            className="flex justify-center items-center gap-3 bg-white shadow-lg hover:shadow-xl p-4 border-2 border-blue-200 hover:border-blue-400"
-          >
-            <Activity className="w-6 h-6 text-blue-500" />
-            <span className="font-medium text-gray-700">Log Activity</span>
-          </button>
+          <Link href="/mood-activity">
+            <Button className="flex w-full justify-center items-center gap-3 h-auto py-4">
+              <Activity className="w-6 h-6 text-blue-500" />
+              <span>Log Activity</span>
+            </Button>
+          </Link>
         </div>
       </div>
     </>
