@@ -5,6 +5,37 @@
 import Card from "@/components/Card";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Navbar from "@/components/Navbar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { Activity, Plus, Smile, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -32,7 +63,6 @@ export default function MoodActivityPage() {
 
   const fetchData = async () => {
     try {
-      // Fetch moods
       const moodsRes = await fetch("/api/moods");
       if (!moodsRes.ok) {
         throw new Error(`Moods API error: ${moodsRes.status}`);
@@ -40,7 +70,6 @@ export default function MoodActivityPage() {
       const moodsData = await moodsRes.json();
       setMoods(moodsData.moods || []);
 
-      // Fetch activities
       const activitiesRes = await fetch("/api/activities");
       if (!activitiesRes.ok) {
         throw new Error(`Activities API error: ${activitiesRes.status}`);
@@ -108,8 +137,6 @@ export default function MoodActivityPage() {
   };
 
   const handleDelete = async (id, type) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
-
     try {
       const endpoint =
         type === "mood" ? `/api/moods/${id}` : `/api/activities/${id}`;
@@ -155,130 +182,143 @@ export default function MoodActivityPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="font-bold text-gray-800 text-3xl">
+            <h1 className="font-heading font-bold text-3xl text-foreground">
               Mood & Activity
             </h1>
-            <p className="mt-1 text-gray-600">
+            <p className="mt-1 text-foreground">
               Track your mood and physical activities
             </p>
           </div>
-          <button
+          <Button
             onClick={() => {
               setShowModal(true);
               setFormData({ ...formData, type: activeTab });
             }}
-            className="flex items-center gap-2 bg-linear-to-br from-pink-500 to-purple-500 hover:shadow-lg px-6 py-3 rounded-xl text-white transition-all"
+            className="flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
             Log {activeTab === "mood" ? "Mood" : "Activity"}
-          </button>
+          </Button>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 bg-white/80 shadow-lg mb-6 p-1 rounded-xl">
-          <button
-            onClick={() => setActiveTab("mood")}
-            className={`flex-1 py-3 rounded-lg font-medium transition-all ${
-              activeTab === "mood"
-                ? "bg-linear-to-r from-pink-500 to-purple-500 text-white shadow-md"
-                : "text-gray-600 hover:bg-pink-50"
-            }`}
-          >
-            <Smile className="inline mr-2 w-5 h-5" />
-            Mood
-          </button>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+          <TabsList className="grid grid-cols-2 w-full">
+            <TabsTrigger value="mood" className="flex items-center gap-2">
+              <Smile className="w-5 h-5" />
+              Mood
+            </TabsTrigger>
+            <TabsTrigger value="activity" className="flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              Activity
+            </TabsTrigger>
+          </TabsList>
 
-          <button
-            onClick={() => setActiveTab("activity")}
-            className={`flex-1 py-3 rounded-lg font-medium transition-all ${activeTab === "activity" ? "bg-linear-to-r from-pink-500 to-purple-500 text-white shadow-md" : "text-gray-600 hover:bg-pink-50"}`}
-          >
-            <Activity className="inline mr-2 w-5 h-5" />
-            Activity
-          </button>
-        </div>
-
-        {/* Content */}
-        {activeTab === "mood" ? (
-          <div className="space-y-4">
-            {moods.length === 0 ? (
-              <Card className="py-12 text-center">
-                <Smile className="mx-auto mb-4 w-16 h-16 text-gray-300" />
-                <h3 className="font-semibold text-gray-600 text-xl">
-                  No Mood Logs Yet
-                </h3>
-                <p className="mt-2 text-gray-500">Start tracking your mood!</p>
-              </Card>
-            ) : (
-              moods.map((mood) => (
-                <Card key={mood.id}>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-3xl">
-                          {moodEmojies[mood.mood] || "😐"}
-                        </span>
-                        <div>
-                          <p className="font-semibold text-gray-800 capitalize">
-                            {mood.mood}
-                          </p>
-                          <p className="text-gray-500 text-sm">
-                            {new Date(mood.date).toLocaleDateString("id-ID", {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-4 mt-2">
-                        <span className="text-gray-600 text-sm">
-                          Energy: {"⚡".repeat(mood.energyLevel || 0)}
-                        </span>
-                        <span className="text-gray-600 text-sm">
-                          Stress: {"😰".repeat(mood.stressLevel || 0)}
-                        </span>
-                      </div>
-                      {mood.notes && (
-                        <p className="mt-2 text-gray-500 text-sm">
-                          📝 {mood.notes}
-                        </p>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => handleDelete(mood.id, "mood")}
-                      className="hover:bg-red-50 p-2 rounded-lg text-red-500 transition-all"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
+          {/* Mood Content */}
+          <TabsContent value="mood">
+            <div className="space-y-4">
+              {moods.length === 0 ? (
+                <Card className="py-12 text-center px-2">
+                  <Smile className="mx-auto mb-4 w-16 h-16 text-muted-foreground" />
+                  <h3 className="font-heading text-xl text-foreground">
+                    No Mood Logs Yet
+                  </h3>
+                  <p className="mt-2 text-foreground">
+                    Start tracking your mood!
+                  </p>
                 </Card>
-              ))
-            )}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {activities.length === 0 ? (
-              <Card className="py-12 text-center">
-                <Activity className="mx-auto mb-4 w-16 h-16 text-gray-300" />
-                <h3 className="font-semibold text-gray-600 text-xl">
-                  No Activities Logged Yet
-                </h3>
-                <p className="mt-2 text-gray-500">
-                  Start tracking your activities!
-                </p>
-              </Card>
-            ) : (
-              activities.map((activity) => (
-                <Card key={activity.id}>
-                  <div className="flex justify-between items-start">
-                    <div>
+              ) : (
+                moods.map((mood) => (
+                  <Card key={mood.id} className="px-2">
+                    <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-semibold text-gray-800 capitalize">
+                        <div className="flex items-center gap-3">
+                          <span className="text-3xl">
+                            {moodEmojies[mood.mood] || "😐"}
+                          </span>
+                          <div>
+                            <p className="font-bold text-foreground capitalize">
+                              {mood.mood}
+                            </p>
+                            <p className="text-sm text-foreground opacity-70">
+                              {new Date(mood.date).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-4 mt-2 text-sm text-foreground">
+                          <span>
+                            Energy: {"⚡".repeat(mood.energyLevel || 0)}
+                          </span>
+                          <span>
+                            Stress: {"😰".repeat(mood.stressLevel || 0)}
+                          </span>
+                        </div>
+                        {mood.notes && (
+                          <p className="mt-2 text-sm text-foreground opacity-80">
+                            📝 {mood.notes}
+                          </p>
+                        )}
+                      </div>
+                      <AlertDialog>
+                        <AlertDialogTrigger
+                          render={
+                            <Button variant="neutral" size="icon">
+                              <Trash2 className="w-5 h-5 text-red-500" />
+                            </Button>
+                          }
+                        />
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Hapus Mood?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Apakah Anda yakin ingin menghapus data mood ini?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(mood.id, "mood")}
+                            >
+                              Hapus
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Activity Content */}
+          <TabsContent value="activity">
+            <div className="space-y-4 ">
+              {activities.length === 0 ? (
+                <Card className="py-12 text-center px-2">
+                  <Activity className="mx-auto mb-4 w-16 h-16 text-muted-foreground" />
+                  <h3 className="font-heading text-xl text-foreground">
+                    No Activities Logged Yet
+                  </h3>
+                  <p className="mt-2 text-foreground">
+                    Start tracking your activities!
+                  </p>
+                </Card>
+              ) : (
+                activities.map((activity) => (
+                  <Card key={activity.id} className="px-2">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-bold text-foreground capitalize">
                           {activity.activityType}
                         </p>
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-sm text-foreground opacity-70">
                           {new Date(activity.date).toLocaleDateString("id-ID", {
                             day: "numeric",
                             month: "long",
@@ -287,215 +327,219 @@ export default function MoodActivityPage() {
                             minute: "2-digit",
                           })}
                         </p>
+                        <div className="flex gap-4 mt-2 text-sm text-foreground">
+                          <span>Duration: {activity.duration} minutes</span>
+                          <span>
+                            Intensity: {"💪".repeat(activity.intensity || 0)}
+                          </span>
+                        </div>
+                        {activity.notes && (
+                          <p className="mt-2 text-sm text-foreground opacity-80">
+                            📝 {activity.notes}
+                          </p>
+                        )}
                       </div>
-                      <div className="flex gap-4 mt-2">
-                        <span className="text-gray-600 text-sm">
-                          Duration: {activity.duration} minutes
-                        </span>
-                        <span className="text-gray-600 text-sm">
-                          Intensity: {"💪".repeat(activity.intensity || 0)}
-                        </span>
-                      </div>
-                      {activity.notes && (
-                        <p className="mt-2 text-gray-500 text-sm">
-                          📝 {activity.notes}
-                        </p>
-                      )}
+                      <AlertDialog>
+                        <AlertDialogTrigger
+                          render={
+                            <Button variant="neutral" size="icon">
+                              <Trash2 className="w-5 h-5 text-red-500" />
+                            </Button>
+                          }
+                        />
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Hapus Activity?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Apakah Anda yakin ingin menghapus data aktivitas
+                              ini?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() =>
+                                handleDelete(activity.id, "activity")
+                              }
+                            >
+                              Hapus
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
-                    <button
-                      onClick={() => handleDelete(activity.id, "activity")}
-                      className="hover:bg-red-50 p-2 rounded-lg text-red-500 transition-all"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
-        )}
+                  </Card>
+                ))
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {/* Modal */}
-        {showModal && (
-          <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <h2 className="mb-4 font-bold text-gray-800 text-2xl">
-                  Log {formData.type === "mood" ? "Mood" : "Activity"}
-                </h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {formData.type === "mood" ? (
-                    <>
-                      <div>
-                        <label className="block mb-2 font-medium text-gray-700 text-sm">
-                          Mood
-                        </label>
-                        <select
-                          value={formData.mood}
-                          onChange={(e) =>
-                            setFormData({ ...formData, mood: e.target.value })
-                          }
-                          className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"
-                        >
-                          {Object.keys(moodEmojies).map((key) => (
-                            <option key={key} value={key}>
-                              {moodEmojies[key]} {key}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block mb-2 font-medium text-gray-700 text-sm">
-                          Energy Level (1-10)
-                        </label>
-                        <input
-                          type="range"
-                          min="1"
-                          max="10"
-                          value={formData.energyLevel}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              energyLevel: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        />
-                        <div className="text-gray-600 text-sm text-center">
-                          Level: {formData.energyLevel}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block mb-2 font-medium text-gray-700 text-sm">
-                          Stress Level (1-10)
-                        </label>
-                        <input
-                          type="range"
-                          min="1"
-                          max="10"
-                          value={formData.stressLevel}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              stressLevel: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        />
-                        <div className="text-gray-600 text-sm text-center">
-                          Level: {formData.stressLevel}
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <label className="block mb-2 font-medium text-gray-700 text-sm">
-                          Activity Type
-                        </label>
-                        <select
-                          value={formData.activityType}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              activityType: e.target.value,
-                            })
-                          }
-                          className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"
-                        >
-                          <option value="exercise">Exercise</option>
-                          <option value="yoga">Yoga</option>
-                          <option value="meditation">Meditation</option>
-                          <option value="walking">Walking</option>
-                          <option value="running">Running</option>
-                          <option value="swimming">Swimming</option>
-                          <option value="dancing">Dancing</option>
-                          <option value="other">Other</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block mb-2 font-medium text-gray-700 text-sm">
-                          Duration (minutes)
-                        </label>
-                        <input
-                          type="number"
-                          value={formData.duration}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              duration: e.target.value,
-                            })
-                          }
-                          min="1"
-                          className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block mb-2 font-medium text-gray-700 text-sm">
-                          Intensity (1-10)
-                        </label>
-                        <input
-                          type="range"
-                          min="1"
-                          max="10"
-                          value={formData.intensity}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              intensity: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        />
-                        <div className="text-gray-600 text-sm text-center">
-                          Level: {formData.intensity}
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  <div>
-                    <label className="block mb-2 font-medium text-gray-700 text-sm">
-                      Notes
-                    </label>
-                    <textarea
-                      value={formData.notes}
-                      onChange={(e) =>
-                        setFormData({ ...formData, notes: e.target.value })
+        <Dialog open={showModal} onOpenChange={setShowModal}>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                Log {formData.type === "mood" ? "Mood" : "Activity"}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {formData.type === "mood" ? (
+                <>
+                  <div className="space-y-2">
+                    <Label>Mood</Label>
+                    <Select
+                      value={formData.mood}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, mood: value })
                       }
-                      rows={3}
-                      className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full resize-none"
-                      placeholder="Any notes..."
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.keys(moodEmojies).map((key) => (
+                          <SelectItem key={key} value={key}>
+                            {moodEmojies[key]} {key}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Energy Level (1-10)</Label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={formData.energyLevel}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          energyLevel: e.target.value,
+                        })
+                      }
+                      className="w-full accent-main"
+                    />
+                    <div className="text-sm text-center text-foreground">
+                      Level: {formData.energyLevel}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Stress Level (1-10)</Label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={formData.stressLevel}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stressLevel: e.target.value,
+                        })
+                      }
+                      className="w-full accent-main"
+                    />
+                    <div className="text-sm text-center text-foreground">
+                      Level: {formData.stressLevel}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label>Activity Type</Label>
+                    <Select
+                      value={formData.activityType}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, activityType: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="exercise">Exercise</SelectItem>
+                        <SelectItem value="yoga">Yoga</SelectItem>
+                        <SelectItem value="meditation">Meditation</SelectItem>
+                        <SelectItem value="walking">Walking</SelectItem>
+                        <SelectItem value="running">Running</SelectItem>
+                        <SelectItem value="swimming">Swimming</SelectItem>
+                        <SelectItem value="dancing">Dancing</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Duration (minutes)</Label>
+                    <Input
+                      type="number"
+                      value={formData.duration}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          duration: e.target.value,
+                        })
+                      }
+                      min="1"
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowModal(false);
-                        setFormData({ ...formData, type: activeTab });
-                      }}
-                      className="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded-lg text-gray-700 transition-all"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 bg-linear-to-r from-pink-500 to-purple-500 hover:shadow-lg py-2 rounded-lg text-white transition-all"
-                    >
-                      Save
-                    </button>
+                  <div className="space-y-2">
+                    <Label>Intensity (1-10)</Label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={formData.intensity}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          intensity: e.target.value,
+                        })
+                      }
+                      className="w-full accent-main"
+                    />
+                    <div className="text-sm text-center text-foreground">
+                      Level: {formData.intensity}
+                    </div>
                   </div>
-                </form>
+                </>
+              )}
+
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Textarea
+                  value={formData.notes}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
+                  rows={3}
+                  placeholder="Any notes..."
+                />
               </div>
-            </div>
-          </div>
-        )}
+
+              <DialogFooter className="flex gap-3 pt-2">
+                <DialogClose
+                  render={
+                    <Button
+                      variant="neutral"
+                      onClick={() =>
+                        setFormData({ ...formData, type: activeTab })
+                      }
+                    />
+                  }
+                >
+                  Cancel
+                </DialogClose>
+                <Button type="submit">Save</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );

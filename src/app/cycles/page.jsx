@@ -310,26 +310,28 @@ export default function CyclesPage() {
                 <Label>Tanggal Siklus</Label>
 
                 <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full justify-start text-left font-normal"
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {dateRange?.from ? (
-                        dateRange?.to ? (
-                          <>
-                            {format(dateRange.from, "d MMM yyyy")} -{" "}
-                            {format(dateRange.to, "d MMM yyyy")}
-                          </>
-                        ) : (
-                          format(dateRange.from, "d MMM yyyy")
-                        )
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal"
+                      />
+                    }
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange?.to ? (
+                        <>
+                          {format(dateRange.from, "d MMM yyyy")} -{" "}
+                          {format(dateRange.to, "d MMM yyyy")}
+                        </>
                       ) : (
-                        "Pilih rentang tanggal"
-                      )}
-                    </Button>
+                        format(dateRange.from, "d MMM yyyy")
+                      )
+                    ) : (
+                      "Pilih rentang tanggal"
+                    )}
                   </PopoverTrigger>
 
                   <PopoverContent className="w-auto p-0">
@@ -388,9 +390,13 @@ export default function CyclesPage() {
               </div>
 
               <DialogFooter className="flex gap-2 pt-2">
-                <DialogClose render={<Button variant="neutral" />}>
+                <Button
+                  variant="neutral"
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                >
                   Close
-                </DialogClose>
+                </Button>
                 <Button type="submit">
                   {editingCycle ? "Update" : "Save"}
                 </Button>
