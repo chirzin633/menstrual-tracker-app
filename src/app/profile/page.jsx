@@ -5,6 +5,10 @@
 import Card from "@/components/Card";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Calendar, Shield, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -106,26 +110,28 @@ export default function ProfilePage() {
       <Navbar />
       <div className="mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
-          <h1 className="font-bold text-gray-800 text-3xl">Profile Settings</h1>
-          <p className="mt-1 text-gray-600">
+          <h1 className="font-bold text-foreground text-3xl">
+            Profile Settings
+          </h1>
+          <p className="mt-1 text-foreground">
             Manage your account and preferences
           </p>
         </div>
 
         {/* Profile Card */}
-        <Card className="mb-6">
+        <Card className="mb-6 px-2">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-4">
-              <div className="flex justify-center items-center bg-linear-to-r from-pink-500 to-purple-500 rounded-full w-20 h-20 font-bold text-white text-3xl">
+              <div className="flex justify-center items-center bg-main text-main-foreground w-20 h-20 font-bold text-3xl border-2 border-border rounded-full">
                 {profile?.user?.name?.charAt(0) || "U"}
               </div>
               <div>
-                <h2 className="font-semibold text-gray-800 text-2xl">
+                <h2 className="font-bold text-foreground0 text-2xl">
                   {profile?.user?.name}
                 </h2>
-                <p className="text-gray-600">{profile?.user?.email}</p>
+                <p className="text-foreground">{profile?.user?.email}</p>
                 {profile?.user?.birthDate && (
-                  <p className="mt-1 text-gray-500 text-sm">
+                  <p className="mt-1 text-foreground opacity-70 text-sm">
                     <Calendar className="inline mr-1 w-4 h-4" />
                     Born:{" "}
                     {new Date(profile.user.birthDate).toLocaleDateString(
@@ -140,65 +146,67 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-            <button
+            <Button
+              variant={isEditing ? "neutral" : "default"}
               onClick={() => setIsEditing(!isEditing)}
-              className="bg-linear-to-r from-pink-500 to-purple-500 hover:shadow-lg px-4 py-2 rounded-lg text-white transition-all"
             >
               {isEditing ? "Cancel" : "Edit Profile"}
-            </button>
+            </Button>
           </div>
         </Card>
 
         {/* Stats Card */}
         <div className="gap-6 grid grid-cols-1 md:grid-cols-2 mb-6">
-          <Card>
-            <h3 className="mb-2 font-semibold text-gray-700">
+          <Card className="px-2">
+            <h3 className="font-semibold text-foreground text-lg">
               Cycle Statistics
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-2 text-foreground">
               <div className="flex justify-between">
-                <span className="text-gray-600">Average Cycle Length</span>
-                <span className="font-semibold text-pink-500">
+                <span>Average Cycle Length</span>
+                <span className="font-bold text-main">
                   {profile?.averageCycleLength || 28} days
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Average Period Length</span>
-                <span className="font-semibold text-pink-500">
+                <span>Average Period Length</span>
+                <span className="font-bold text-main">
                   {profile?.averagePeriodLength || 5} days
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Total Cycles</span>
-                <span className="font-semibold text-pink-500">
+                <span>Total Cycles</span>
+                <span className="font-bold text-main">
                   {profile?.user?._count?.cycles || 0}
                 </span>
               </div>
             </div>
           </Card>
 
-          <Card>
-            <h3 className="mb-2 font-semibold text-gray-700">Preferences</h3>
+          <Card className="px-2">
+            <h3 className="text-lg font-semibold text-foreground">
+              Preferences
+            </h3>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Email Notifications</span>
+                <span>Email Notifications</span>
                 <span
-                  className={`px-3 py-1 rounded-full text-sm ${
+                  className={`px-3 py-1 rounded-base border-2 border-border font-bold text-sm ${
                     profile?.emailNotifications
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-100 text-gray-500"
+                      ? "bg-main text-main-foreground"
+                      : "bg-secondary-background text-foreground"
                   }`}
                 >
                   {profile?.emailNotifications ? "On" : "Off"}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Push Notifications</span>
+                <span>Push Notifications</span>
                 <span
-                  className={`px-3 py-1 rounded-full text-sm ${
+                  className={`px-3 py-1 rounded-base border-2 border-border font-bold text-sm ${
                     profile?.pushNotification
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-100 text-gray-500"
+                      ? "bg-main text-main-foreground"
+                      : "bg-secondary-background text-foreground"
                   }`}
                 >
                   {profile?.pushNotification ? "On" : "Off"}
@@ -210,45 +218,37 @@ export default function ProfilePage() {
 
         {/* Edit Form */}
         {isEditing && (
-          <Card>
-            <h3 className="mb-4 font-semibold text-gray-800 text-xl">
+          <Card className="px-2">
+            <h3 className="mb-2 font-bold text-foreground text-xl">
               Edit Profile
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block mb-2 font-medium text-gray-700 text-sm">
-                  Full Name
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label>Full Name</Label>
+                <Input
                   type="text"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"
                 />
               </div>
 
-              <div>
-                <label className="block mb-2 font-medium text-gray-700 text-sm">
-                  Birth Date
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label>Birth Date</Label>
+                <Input
                   type="date"
                   value={formData.birthDate}
                   onChange={(e) =>
                     setFormData({ ...formData, birthDate: e.target.value })
                   }
-                  className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"
                 />
               </div>
 
               <div className="gap-4 grid grid-cols-2">
-                <div>
-                  <label className="block mb-2 font-medium text-gray-700 text-sm">
-                    Average Cycle Length (days)
-                  </label>
-                  <input
+                <div className="space-y-2">
+                  <Label>Average Cycle Length (days)</Label>
+                  <Input
                     type="number"
                     value={formData.averageCycleLength}
                     onChange={(e) =>
@@ -259,14 +259,12 @@ export default function ProfilePage() {
                     }
                     min="20"
                     max="40"
-                    className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"
                   />
                 </div>
-                <div>
-                  <label className="block mb-2 font-medium text-gray-700 text-sm">
-                    Average Period Length (days)
-                  </label>
-                  <input
+
+                <div className="space-y-2">
+                  <Label>Average Period Length (days)</Label>
+                  <Input
                     type="number"
                     value={formData.averagePeriodLength}
                     onChange={(e) =>
@@ -277,41 +275,35 @@ export default function ProfilePage() {
                     }
                     min="3"
                     max="10"
-                    className="px-4 py-2 border border-gray-300 focus:border-pink-500 rounded-lg outline-none focus:ring-2 focus:ring-pink-200 w-full"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block mb-2 font-medium text-gray-700 text-sm">
-                  Notifications
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
+              <div className="space-y-2">
+                <Label>Notifications</Label>
+                <div className="space-y-2 pt-1">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
                       checked={formData.emailNotifications}
-                      onChange={(e) =>
+                      onCheckedChange={(checked) =>
                         setFormData({
                           ...formData,
-                          emailNotifications: e.target.checked,
+                          emailNotifications: checked,
                         })
                       }
-                      className="rounded focus:ring-pink-500 w-4 h-4 text-pink-500"
                     />
-                    Email Notifications
+                    <span className="text-foreground">Email Notifications</span>
                   </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
+
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
                       checked={formData.pushNotifications}
-                      onChange={(e) =>
+                      onCheckedChange={(checked) =>
                         setFormData({
                           ...formData,
-                          pushNotifications: e.target.checked,
+                          pushNotifications: checked,
                         })
                       }
-                      className="rounded focus:ring-pink-500 w-4 h-4 text-pink-500"
                     />
                     Push Notifications
                   </label>
@@ -319,42 +311,46 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button
+                <Button
                   type="button"
+                  variant="neutral"
                   onClick={() => setIsEditing(false)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded-lg text-gray-700 transition-all"
+                  className="flex-1 cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-linear-to-r from-pink-500 to-purple-500 hover:shadow-lg py-2 rounded-lg text-white transition-all"
-                >
+                </Button>
+                <Button type="submit" className="flex-1 cursor-pointer">
                   Save Changes
-                </button>
+                </Button>
               </div>
             </form>
           </Card>
         )}
 
         {/* Account Actions */}
-        <Card className="mt-6">
-          <h3 className="mb-4 font-semibold text-gray-700">Account</h3>
+        <Card className="mt-6 px-2">
+          <h3 className="mb-4 font-bold text-lg text-foreground">Account</h3>
           <div className="space-y-3">
-            <button className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 p-3 rounded-lg w-full transition-all">
+            <Button
+              className="flex justify-between items-center w-full h-auto py-3 cursor-pointer"
+              variant="neutral"
+            >
               <span className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-gray-600" />
+                <Shield className="w-5 h-5 text-foreground" />
                 Change Password
               </span>
-              <span className="text-gray-400">→</span>
-            </button>
-            <button className="flex justify-between items-center bg-red-50 hover:bg-red-100 p-3 rounded-lg w-full transition-all">
-              <span className="flex items-center gap-2 text-red-600">
+              <span>→</span>
+            </Button>
+            <Button
+              variant="neutral"
+              className="flex justify-between items-center w-full h-auto py-3 cursor-pointer"
+            >
+              <span className="flex items-center gap-2 text-red-500">
                 <User className="w-5 h-5" />
                 Delete Account
               </span>
-              <span className="text-red-400">→</span>
-            </button>
+              <span className="text-red-500">→</span>
+            </Button>
           </div>
         </Card>
       </div>

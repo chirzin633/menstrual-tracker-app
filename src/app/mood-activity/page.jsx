@@ -182,7 +182,7 @@ export default function MoodActivityPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="font-heading font-bold text-3xl text-foreground">
+            <h1 className="font-heading text-3xl text-foreground">
               Mood & Activity
             </h1>
             <p className="mt-1 text-foreground">
